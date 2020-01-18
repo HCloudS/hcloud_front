@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript RSA Encryption</title>
+  <script src="jsencrypt.js"></script>
+</head>
+<body>
+<label for="privkey">Private Key</label><br/>
+<textarea id="privkey" rows="15" cols="65">-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAxxCSrFW0M+Kx5lP8qzgEIX40Ep5ErbmIbGxoGmBXcU5tIOvx
+TAEqa+GUo1MwwNZwzwPt2g4eqHQt1v7XHLuyfKNbAD81YfjzC2UUKJnmdC6SpkXW
+Ia2xjeALrK6Pbb0QONtIAxP1siVi5xNLudCQnGgHHFX5HkH1PsDylBNX0qHeqH7d
+kVhNTIU325ggtO9g8j8bF0PzkBmo6oP4rXgxbgT9lg4B3YOk1YRs77EWNoSCTcW1
+W+IgNfCQ3uC9CcPB8t9KqPA/eupP1MaCfbmHoodx+31zMXWkipniXoE73DlLETHv
+YyP4MXXNYrSPBGx4XmYqXspsAaMd6K+yj1NZcQIDAQABAoIBAFtxMH87q1i+RQxR
+/lpElBkymQcIbvICrTlpHvUm1mQ1K4oY+DH6wxrld9sCxv1+RDnES0mEfO7S14/Q
+Zs5LJnV8sLvPTV1g93x/hSAVejhagIEiyXeVC1/p0FMVqMs3MzF7AXxwecfIxsLx
+KTMFLLi8TK/milYs5FRcW9JLhGc7ptrd0k7pkNEZ51Du9dr6WwlaW7p+p0G/sv7O
+KWZgt3wdI0DwaG0Ex/IvIcGQ7XAgfgbbbkuMRth6RCZckne0JgZHXDLdBuCffMsm
+rH9dm/wGf5dx6DlKksj3tvaCcHBGpWOQ9eHcTqMgMSBDLipZ5ANok5pxP4HxA+kU
+602N1AECgYEA5LVnY+NiAvR1lGrsBqQyjDt9i3X4TbkbwsgNfQZQuaWPUroSfa0V
+B8ptdsllg6ov0Ba7v+0t60tgmmbGsahB87kpQ7qUdovbOs99FCGlod7zPv0LCkbO
+ib3wbwIc5SSE7q9k1jQpPQp+Y9hYPBX0t24u5G5LGmT+Iu961KwdycECgYEA3tGb
+feQdJ25geEcCzCopWEibIfpOwPRLpApjTBZ/ukYev9HonB1W/acWSCBnqOL3P8Ve
+JrpSQlzMYkFMcCVWy/xAoZeWD+P+H1jY8ueNaRrQHDAWJh6Pbhq2QfHbFUJwh94T
+8BQqgiYrJ4PPbuMBJrk6D/ENJEt018jsuBxTm7ECgYEAmJKLzo86K055wfEyU5vm
+PLbTId4pL3B1nJNorCcyYyaXXlDTVRPKG9BnBf+EwTkffGouBfNr1rQKVfaKRqpA
+lR7I8G3f7NWQAsO4ZV2s6TeafkLAwrJJxon3g5adQCAErlZDpsJVYGtHtcP12N+s
+yVGv5qPNZmZJQ3UPNCE+HgECgYAEM8fO9AJov/gpzI0M9K6a76OdXG8nzHOwwFFn
+GfWGudPSok7UwujlF8Wfzpyl3sHy/fHsoQ70GXPxVnHum4WrizJc2dMGsbIVPUO6
+MQvFs6/BGFcSmPjzhqVxUPJk0D/3EAUoPfkfQ0EFGcNLwBRBerTRoCYzTQkDGNL+
+FeqtwQKBgAYRsQA4mXzfWEbSeV+/lMzL9XuAWCFJKHNvueIbDjurh6xETh28/yue
+zrrjagwTgsC5wINREGzD7jtk9C+lFe2YjwdIuWtCJcLj0DdGh+EszOiGEmnFk9TE
+tZ2TtfBClasYK6+SVYP2FgLv1tu3sYAvlUqNX4/nPxD5yKgUw6Us
+-----END RSA PRIVATE KEY-----</textarea><br/>
+<label for="pubkey">Public Key</label><br/>
+<textarea id="pubkey" rows="15" cols="65">-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxxCSrFW0M+Kx5lP8qzgE
+IX40Ep5ErbmIbGxoGmBXcU5tIOvxTAEqa+GUo1MwwNZwzwPt2g4eqHQt1v7XHLuy
+fKNbAD81YfjzC2UUKJnmdC6SpkXWIa2xjeALrK6Pbb0QONtIAxP1siVi5xNLudCQ
+nGgHHFX5HkH1PsDylBNX0qHeqH7dkVhNTIU325ggtO9g8j8bF0PzkBmo6oP4rXgx
+bgT9lg4B3YOk1YRs77EWNoSCTcW1W+IgNfCQ3uC9CcPB8t9KqPA/eupP1MaCfbmH
+oodx+31zMXWkipniXoE73DlLETHvYyP4MXXNYrSPBGx4XmYqXspsAaMd6K+yj1NZ
+cQIDAQAB
+-----END PUBLIC KEY-----</textarea><br/>
+<label for="input">Text to encrypt:</label><br/>
+<textarea id="input" name="input" type="text" rows=4 cols=70>This is a test!</textarea><br/>
+<input id="testme" type="button" value="Test Me!!!" onclick="testButton()" /><br/>
+
+    <script>
+
+    function testButton() {
+      //获取输入内容
+      var inputText = document.getElementById("input").value;
+
+      // 根据公钥进行加密
+      var encrypt = new JSEncrypt();
+      var publicKey = document.getElementById("pubkey").value;
+
+      encrypt.setPublicKey(publicKey);
+      var encrypted = encrypt.encrypt(inputText);
+      alert("加密结果："+encrypted);
+      console.log("加密结果："+encrypted);
+
+      // 根据私钥进行解密
+      var decryp = new JSEncrypt();//
+      var privateKey = document.getElementById("privkey").value;
+      decryp.setPrivateKey(privateKey);
+
+      var uncrypted = decryp.decrypt(encrypted);
+      // Now a simple check to see if the round-trip worked.
+      alert("解密结果："+uncrypted);
+      console.log("解密结果："+uncrypted);
+
+    }
+	</script>
+
+  </body>
+</html>

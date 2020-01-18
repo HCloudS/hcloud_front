@@ -1,58 +1,80 @@
-import {of as observableOf, Observable} from 'rxjs';
+import {of as observableOf, Observable, BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {Contacts, RecentUsers, UserData} from '../data/users';
+import {Contacts, RecentUsers, RegisterUserInfo, User, UserData} from '../data/users';
+import {HttpClient} from '@angular/common/http';
+import {BaseRequestBo} from '../data/bean/BaseRequestBo';
+import {catchError, map} from 'rxjs/operators';
+import {APP_TENANT_ID, APP_USER_ID, OAUTH_ACCESS_TOKEN, OAUTH_REFRSH_TOKEN} from '../data/common/constant.common';
 
 @Injectable()
 export class UserService extends UserData {
 
-  private time: Date = new Date;
+  public currentUser: Observable<any>;
 
-  private users = {
-    nick: {name: 'Nick Jones', picture: 'assets/images/nick.png'},
-    eva: {name: 'Eva Moor', picture: 'assets/images/eva.png'},
-    jack: {name: 'Jack Williams', picture: 'assets/images/jack.png'},
-    lee: {name: 'Lee Wong', picture: 'assets/images/lee.png'},
-    alan: {name: 'Alan Thompson', picture: 'assets/images/alan.png'},
-    kate: {name: 'Kate Martinez', picture: 'assets/images/kate.png'},
-  };
-  private types = {
-    mobile: 'mobile',
-    home: 'home',
-    work: 'work',
-  };
-  private contacts: Contacts[] = [
-    {user: this.users.nick, type: this.types.mobile},
-    {user: this.users.eva, type: this.types.home},
-    {user: this.users.jack, type: this.types.mobile},
-    {user: this.users.lee, type: this.types.mobile},
-    {user: this.users.alan, type: this.types.home},
-    {user: this.users.kate, type: this.types.work},
-  ];
-  private recentUsers: RecentUsers[] = [
-    {user: this.users.alan, type: this.types.home, time: this.time.setHours(21, 12)},
-    {user: this.users.eva, type: this.types.home, time: this.time.setHours(17, 45)},
-    {user: this.users.nick, type: this.types.mobile, time: this.time.setHours(5, 29)},
-    {user: this.users.lee, type: this.types.mobile, time: this.time.setHours(11, 24)},
-    {user: this.users.jack, type: this.types.mobile, time: this.time.setHours(10, 45)},
-    {user: this.users.kate, type: this.types.work, time: this.time.setHours(9, 42)},
-    {user: this.users.kate, type: this.types.work, time: this.time.setHours(9, 31)},
-    {user: this.users.jack, type: this.types.mobile, time: this.time.setHours(8, 0)},
-  ];
+  private currentUserSubject: BehaviorSubject<User>;
 
-  getUsers(): Observable<any> {
-    return observableOf(this.users);
-  }
-
-  getContacts(): Observable<Contacts[]> {
-    return observableOf(this.contacts);
-  }
-
-  getRecentUsers(): Observable<RecentUsers[]> {
-    return observableOf(this.recentUsers);
+  constructor(private  http: HttpClient) {
+    super();
+    this.currentUserSubject = new BehaviorSubject<User>(null);
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
   isLogin(): Boolean {
-    // TODO 从当前的 session中获取当前用户是否存在
-    return false;
+    let isLogin = false;
+    this.currentUser.subscribe(res => {
+      if (res) {
+        isLogin = res.code === 0;
+      }
+    });
+    return isLogin;
+  }
+
+  registerByPassword(registerInfo: RegisterUserInfo): Observable<any> {
+    const url = '/api/admin/user/account/add';
+    return this.http.post<any>(url, registerInfo).pipe(
+      catchError(super.handleError('loginByMobile', [])));
+  }
+
+  registerByPhone(registerInfo: RegisterUserInfo): Observable<any> {
+    const url = '/api/admin/user/phone/add';
+    return this.http.post<any>(url, registerInfo).pipe(
+      catchError(super.handleError('loginByMobile', [])));
+  }
+
+  getContacts(): Observable<Contacts[]> {
+    return undefined;
+  }
+
+  getRecentUsers(): Observable<RecentUsers[]> {
+    return undefined;
+  }
+
+  getUsers(): Observable<BaseRequestBo<User>> {
+    const url = '/api/admin/user/info';
+    return this.http.get<any>(url).pipe(
+      catchError(super.handleError('getUserInfo', [])));
+  }
+
+  logOut(): Observable<any> {
+    const url = '/api/auth/token/logout';
+    return this.http.delete<BaseRequestBo<any>>(url).pipe((map(res => {
+        if (res.code === 0) {
+          this.currentUserSubject.next(null);
+          this.clearTokenToSession();
+        }
+      })),
+      catchError(super.handleError('getUserInfo', [])));
+  }
+
+  /**
+   * @des 移除登出后的所有session存储的用户相关信息
+   * @author houshuai
+   * @date 2019/5/29
+   */
+  protected clearTokenToSession() {
+    sessionStorage.removeItem(OAUTH_ACCESS_TOKEN);
+    sessionStorage.removeItem(OAUTH_REFRSH_TOKEN);
+    sessionStorage.removeItem(APP_USER_ID);
+    sessionStorage.removeItem(APP_TENANT_ID);
   }
 }
