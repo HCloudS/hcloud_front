@@ -1,4 +1,4 @@
-import {of as observableOf, Observable, BehaviorSubject} from 'rxjs';
+import {Observable, BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Contacts, RecentUsers, RegisterUserInfo, User, UserData} from '../data/users';
 import {HttpClient} from '@angular/common/http';
